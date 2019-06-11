@@ -11,18 +11,45 @@ class MainActivity : AppCompatActivity() {
     lateinit var rating_bar: RatingBar
     lateinit var save_btn: Button
     lateinit var reference: DatabaseReference
+    lateinit var listView: ListView
+
+    lateinit var ref:DatabaseReference
+    lateinit var detailList: MutableList<Detail>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        detailList = mutableListOf()
+        reference = FirebaseDatabase.getInstance().getReference("details")
+
         name_et = findViewById(R.id.name_et)
         rating_bar = findViewById(R.id.rating_bar)
         save_btn = findViewById(R.id.save_btn)
+        listView = findViewById(R.id.listView)
 
         save_btn.setOnClickListener {
             saveDetail()
         }
+
+        reference.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+               if(p0.exists()){
+                   detailList.clear()
+                   for(i in p0.children){
+                       val detail = i.getValue(Detail::class.java)
+                       detailList.add(detail!!)
+                   }
+                   val adapter = DetailAdapter(applicationContext, R.layout.details,detailList)
+                   listView.adapter = adapter
+               }
+            }
+
+        })
     }
 
 
