@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                        val detail = i.getValue(Detail::class.java)
                        detailList.add(detail!!)
                    }
-                   val adapter = DetailAdapter(applicationContext, R.layout.details,detailList)
+                   val adapter = DetailAdapter(this@MainActivity, R.layout.details,detailList)
                    listView.adapter = adapter
                }
             }
@@ -64,9 +64,10 @@ class MainActivity : AppCompatActivity() {
         reference = FirebaseDatabase.getInstance().getReference("details")
         val detailId =reference.push().key
 
-        val detail = Detail(detailId!!, hero_name,rating_bar.numStars)
+        //val detail = Detail(detailId!!, hero_name,rating_bar.numStars)
+        val detail = Detail(detailId!!, hero_name,rating_bar.rating.toInt())
         reference.child(detailId).setValue(detail).addOnCompleteListener {
-            Toast.makeText(this, "Saved successfully", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show()
         }
 
     }
